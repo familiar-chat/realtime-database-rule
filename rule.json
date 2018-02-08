@@ -1,0 +1,871 @@
+{
+  "rules": {
+    "organizations": {
+      ".read" : "false",
+      ".write": "false",
+      "$organization_id": {
+        ".read" : "false",
+        ".write": "false",
+        "allowed_ip_addresses": {
+          ".read" : "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+          ".write": "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+          "$ip_address": {
+            ".validate": "newData.isString() 
+                       && newData.val().length >= 7
+                       && newData.val().length <= 15"
+          }
+        },
+        "calendars": {
+          ".read" : "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id) 
+                  || root.hasChild('visitors/' + auth.uid + '/organizations/' + $organization_id)",
+          ".write": "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+        	"$calendar_id": {
+            "start_time": {
+              ".validate": "newData.isNumber() 
+                         && newData.val() >= 0 
+                         && newData.val() <= 86400"
+            },
+            "end_time": {
+              ".validate": "newData.isNumber() 
+                         && newData.val() >= 0 
+                         && newData.val() <= 86400"
+            },
+            "day_of_the_week": {
+              ".validate": "newData.isNumber() 
+                         && newData.val() >= 1 
+                         && newData.val() <= 7"
+            },
+            "enabled": {
+              ".validate": "newData.val() === true
+                         || newData.val() === false"
+            },
+            "$other": {
+              ".write": false,
+              ".validate": false
+            },
+          },
+        },
+        "documents": {
+          ".read" : "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+          ".write": "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+          "images": {
+          	"$image": {
+              // todo validate
+            }
+          },
+          "$other": {
+            ".write": false,
+            ".validate": false
+          }
+        },
+        "enabled": {
+          ".validate": "newData.val() === true
+                     || newData.val() === false"
+        },
+        "fixed_phrases": {
+          ".read" : "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+          ".write": "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+          "$fixed_pharase_id": {
+            "enabled": {
+              ".validate": "newData.val() === true
+                         || newData.val() === false"
+            },
+            "name": {
+              ".validate": "newData.isString()
+                         && newData.val().length <= 32"
+            },
+            "value": {
+              ".validate": "newData.isString()
+                         && newData.val().length <= 512"
+            },
+            "$other": {
+              ".write": false,
+              ".validate": false
+            }
+          }
+        },
+        "groups": {
+          ".read" : "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+          ".write": "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+          "$group_id": {
+            "enabled": {
+              ".validate": "newData.val() === true
+                         || newData.val() === false"
+            },
+            "fixed_phrases": {
+              "$fixed_pharase_id": {
+                "enabled": {
+                  ".validate": "newData.val() === true
+                             || newData.val() === false"
+                },
+                "name": {
+                  ".validate": "newData.isString()
+                             && newData.val().length <= 32"
+                },
+                "value": {
+                  ".validate": "newData.isString()
+                             && newData.val().length <= 512"
+                },
+                "$other": {
+              		".write": false,
+                  ".validate": false
+                }
+              }
+            }
+          }
+        },
+        "information": {
+          ".read" : "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+          ".write": "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+          "address": {
+            ".validate": "newData.isString() 
+                       && newData.val().length < 512"
+           },
+          "email": {
+            ".validate": "newData.isString() 
+                       && newData.val().length >= 3
+                       && newData.val().length <= 512"
+          },
+          "max_user_num": {
+            ".write": false,
+            ".validate": "newData.isNumber() 
+                       && newData.val() >= 0",
+          },
+          "name": {
+            ".validate": "newData.isString()
+                       && newData.val().length <= 512"
+          },
+          "phone": {
+            ".validate": "newData.isString()
+                       && newData.val().length <= 32"
+          },
+          "zip_code": {},
+          "$other": {
+            ".write": false,
+            ".validate": false
+          }
+        },
+        "sites": {
+          ".read" : "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id) 
+                  || root.hasChild('visitors/' + auth.uid + '/organizations/' + $organization_id)",
+          ".write": "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+          "$site_id": {
+            "defaulted": {
+              ".validate": "newData.val() === true
+                         || newData.val() === false"
+            },
+            "enabled": {
+              ".validate": "newData.val() === true
+                         || newData.val() === false"
+            },
+            "hostname": {
+              ".validate": "newData.isString()
+                         && newData.val().length <= 128"
+            },
+            "notification": {
+              "first_message_recieved": {
+                "sound_id": {
+                  ".validate" : "root.hasChild('sounds/' + newData.val())",
+                },
+                "$other": {
+              		".write": false,
+                  ".validate": false
+                }
+              },
+              "message_recieved": {
+                "sound_id": {
+                  ".validate" : "root.hasChild('sounds/' + newData.val())",
+                },
+                "$other": {
+              		".write": false,
+                  ".validate": false
+                }
+              },
+              "visited": {
+              	"sound_id": {
+                  ".validate" : "root.hasChild('sounds/' + newData.val())",
+                },
+                "$other": {
+              		".write": false,
+                  ".validate": false
+                }
+              },
+              "$other": {
+              	".write": false,
+                ".validate": false
+              }
+            },
+            "widget": {
+              "colors": {
+                "description": {
+                  ".validate": "newData.isString()
+                             && (
+                    							newData.val().matches(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/)
+                    					 || newData.val().matches(/^rgb\\(((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\,\\s?){2}(\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\)$/)
+                               || newData.val().matches(/^rgba\\(((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\,\\s?){3}(0|0?\\.\\d+|1|1\\.0+)\\)$/)
+                  							)"
+                },
+                "main": {
+                  ".validate": "newData.isString()
+                             && (
+                    							newData.val().matches(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/)
+                    					 || newData.val().matches(/^rgb\\(((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\,\\s?){2}(\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\)$/)
+                               || newData.val().matches(/^rgba\\(((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\,\\s?){3}(0|0?\\.\\d+|1|1\\.0+)\\)$/)
+                  							)"
+                },
+                "visitor_message": {
+                  "text": {
+                    ".validate": "newData.isString()
+                               && (
+                                    newData.val().matches(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/)
+                                 || newData.val().matches(/^rgb\\(((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\,\\s?){2}(\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\)$/)
+                                 || newData.val().matches(/^rgba\\(((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\,\\s?){3}(0|0?\\.\\d+|1|1\\.0+)\\)$/)
+                                  )"
+                  },
+                  "background": {
+                    ".validate": "newData.isString()
+                               && (
+                                    newData.val().matches(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/)
+                                 || newData.val().matches(/^rgb\\(((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\,\\s?){2}(\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\)$/)
+                                 || newData.val().matches(/^rgba\\(((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\,\\s?){3}(0|0?\\.\\d+|1|1\\.0+)\\)$/)
+                                  )"
+                  },
+                  "$other": {
+                    ".write": false,
+                    ".validate": false
+                  }
+                },
+                "subtitle": {
+                  ".validate": "newData.isString()
+                             && (
+                    							newData.val().matches(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/)
+                    					 || newData.val().matches(/^rgb\\(((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\,\\s?){2}(\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\)$/)
+                               || newData.val().matches(/^rgba\\(((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\,\\s?){3}(0|0?\\.\\d+|1|1\\.0+)\\)$/)
+                  							)"
+                },
+                "title": {
+                  ".validate": "newData.isString()
+                             && (
+                    							newData.val().matches(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/)
+                    					 || newData.val().matches(/^rgb\\(((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\,\\s?){2}(\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\)$/)
+                               || newData.val().matches(/^rgba\\(((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\,\\s?){3}(0|0?\\.\\d+|1|1\\.0+)\\)$/)
+                  							)"
+                },
+                "user_message": {
+                  "text": {
+                    ".validate": "newData.isString()
+                               && (
+                                    newData.val().matches(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/)
+                                 || newData.val().matches(/^rgb\\(((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\,\\s?){2}(\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\)$/)
+                                 || newData.val().matches(/^rgba\\(((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\,\\s?){3}(0|0?\\.\\d+|1|1\\.0+)\\)$/)
+                                  )"
+                  },
+                  "background": {
+                    ".validate": "newData.isString()
+                               && (
+                                    newData.val().matches(/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/)
+                                 || newData.val().matches(/^rgb\\(((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\,\\s?){2}(\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\)$/)
+                                 || newData.val().matches(/^rgba\\(((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5])\\,\\s?){3}(0|0?\\.\\d+|1|1\\.0+)\\)$/)
+                                  )"
+                  },
+                  "$other": {
+                    ".write": false,
+                    ".validate": false
+                  }
+                }
+              },
+              "description": {
+                ".validate": "newData.isString()
+                           && newData.val().length <= 64"
+              },
+              "image": {
+                // todo check matchers
+                ".validate": "newData.isString()"
+              },
+              "place": {
+                ".validate": "newData.isString() 
+                           && (
+                                newData.val() === 'bottom_left' 
+                             || newData.val() === 'bottom_right' 
+                             || newData.val() === 'bottom_center' 
+                              )"
+             	},
+              "title": {
+                ".validate": "newData.isString()
+                           && newData.val().length <= 32"
+              },
+              "subtitle": {
+                ".validate": "newData.isString()
+                           && newData.val().length <= 64"
+              },
+              "offline_title": {
+                ".validate": "newData.isString()
+                           && newData.val().length <= 16"
+              },
+              "offline_subtitle": {
+                ".validate": "newData.isString()
+                           && newData.val().length <= 32"
+              },
+              "offline_description": {
+                ".validate": "newData.isString()
+                           && newData.val().length <= 64"
+              },
+              "open_button": {
+                "title": {
+                  ".validate": "newData.isString()
+                             && newData.val().length <= 16"
+                },
+                "description": {
+                  ".validate": "newData.isString()
+                             && newData.val().length <= 32"
+                },
+                "$other": {
+                  ".write": false,
+                  ".validate": false
+                }
+              },
+              "$other": {
+              	".write": false,
+                ".validate": false
+              }
+            },
+            "$other": {
+              ".write": false,
+              ".validate": false
+            }
+          }
+        },
+        "triggers": {
+          ".read" : "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id) 
+                  || root.hasChild('visitors/' + auth.uid + '/organizations/' + $organization_id)",
+          ".write": "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+          "$trigger_id": {
+            "name": {
+              ".validate": "newData.isString()
+                         && newData.val().length <= 32"
+            },
+            "enabled": {
+              ".validate": "newData.val() === true
+                         || newData.val() === false"
+            },
+            "operate": {
+	            ".validate": "newData.isString() 
+                        && (
+                							newData.val() === 'and' 
+                           || newData.val() === 'or' 
+              							)"
+            },
+            "conditions": {
+              "$condition": {
+                "operate": {
+	                ".validate": "newData.isString() 
+                             && (
+                                  newData.val() === 'and' 
+                               || newData.val() === 'or' 
+                  							)"
+                },
+                "type": {
+	                ".validate": "newData.isString() 
+                             && (
+                    							newData.val() === 'url' 
+                    				 	 || newData.val() === 'message' 
+                               || newData.val() === 'visit_count'
+                  							)"
+                },
+                "values": {},
+                //value type is array
+                "comparison": {
+                  ".validate": "newData.isString() 
+                             && (
+                                  newData.val() === 'not_less' 
+                               || newData.val() === 'not_greater' 
+                               || newData.val() === 'equal'
+                                )"
+                },
+                "$other": {
+              		".write": false,
+                  ".validate": false
+                }
+              }
+            },
+            "actions" : {
+              "$action" : {
+                "type" : {
+	                ".validate": "newData.isString() 
+                             && (
+                    							newData.val() === 'add_tag' 
+                    					 || newData.val() === 'del_tag' 
+                    					 || newData.val() === 'send_message'
+                    					 || newData.val() === 'send_image_message'
+                  							)"
+                },
+                "value": {},
+                "secound": {
+                  ".validate": "newData.isNumber()"
+                },
+                ".validate" : "newData.hasChild('type')",        
+                "$other": {
+              		".write": false,
+                  ".validate": false
+                }
+              }
+            },
+            "$other": {
+              ".write": false,
+              ".validate": false
+            }
+          }
+        },
+        "users": {
+          ".read" : "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+          ".write": "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+          ".indexOn": ".value",
+          "$user_id": {
+            "connected": {
+              ".validate": "newData.val() === true
+                         || newData.val() === false"
+            },
+            "display_name": {
+              ".validate": "newData.isString() 
+                         && newData.val().length <= 16"
+            },
+            "enabled": {
+              ".validate": "newData.val() === true
+                         || newData.val() === false"
+            },
+            "email": {
+              ".validate": "newData.isString() 
+                         && newData.val().length >= 3
+                         && newData.val().length <= 512"
+            },
+            "fixed_phrases": {
+              "$fixed_pharase_id": {
+                "enabled": {
+                  ".validate": "newData.val() === true
+                             || newData.val() === false"
+                },
+                "name": {
+                  ".validate": "newData.isString()
+                             && newData.val().length <= 32"
+                },
+                "value": {
+                  ".validate": "newData.isString()
+                             && newData.val().length <= 512"
+                },
+                "$other": {
+              		".write": false,
+                  ".validate": false
+                }
+              }
+            },
+            "groups": {
+              "$group_id": {}
+            },
+            "image": {
+              // todo check matches
+              ".validate": "newData.isString()"
+            },
+            "name": {
+              ".validate": "newData.isString()
+                         && newData.val().length <= 32"
+            },
+            "state": {
+              ".validate": "newData.isString()
+                         && (
+                              newData.val() === 'active'
+                           || newData.val() === 'passive'
+                            )"
+            },
+            "phone": {
+              ".validate": "newData.isString()
+                         && newData.val().length <= 32"
+            },
+            "roles": {
+              //todo validate
+            },
+            "created_date": {
+              ".validate": "newData.isNumber() 
+                         && newData.val() >= 1502042832800 
+                         && newData.val() <= 1912270032800"
+            },
+            "updated_date": {
+              ".validate": "newData.isNumber() 
+                         && newData.val() >= 1502042832800 
+                         && newData.val() <= 1912270032800"
+            },
+            "$other": {
+              ".write": false,
+              ".validate": false
+            }
+          }
+        },
+        "visitors": {
+          ".indexOn": ["connected_count", "general/updated_date"],
+          ".read" : "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+          ".write" : "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+          "$visitor_id": {
+            ".read" : "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id)",
+            ".write" : "auth !== null",
+            "banned": {
+              "description": {
+                ".validate": "newData.isString()
+                           && newData.val().length <= 32"
+              },
+              "user_id": {
+                // todo validate
+              },
+              "created_date": {
+                ".validate": "newData.isNumber() 
+                           && newData.val() >= 1502042832800 
+                           && newData.val() <= 1912270032800"
+              },
+              "updated_date": {
+                ".validate": "newData.isNumber() 
+                           && newData.val() >= 1502042832800 
+                           && newData.val() <= 1912270032800"
+              },
+              "$other": {
+              	".write": false,
+                ".validate": false
+              }
+            },
+            "company": {
+              ".validate": "newData.isString()
+                         && newData.val().length <= 64"
+            },
+            "connected_count": {
+              ".write": false,
+              ".validate": "newData.isNumber() 
+                         && newData.val() >= 0"
+            },
+            "document": {
+              "referrer": {
+              	".validate": "newData.isString()"
+              },
+              "domain": {
+              	".validate": "newData.isString()"
+              },
+              "$other": {
+              	".write": false,
+                ".validate": false
+              }
+            },
+            "email": {
+              ".validate": "newData.isString() 
+                         && newData.val().length >= 3
+                         && newData.val().length <= 512"
+            },
+            "file_transfer_flag": {
+              ".validate": "newData.val() === true
+                         || newData.val() === false"
+            },
+            "general": {
+          		".read" : "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id) 
+                      || root.hasChild('visitors/' + auth.uid + '/organizations/' + $organization_id)",
+          		".write" : "root.hasChild('users/' + auth.uid + '/organizations/' + $organization_id) 
+                       || root.hasChild('visitors/' + auth.uid + '/organizations/' + $organization_id)",
+              "connections": {
+                "$connection_id": {
+                  "connected_date": {
+                    ".validate": "newData.isNumber() 
+                               && newData.val() >= 1502042832800 
+                               && newData.val() <= 1912270032800"
+                  },
+                  "disconnected_date": {
+                    ".validate": "newData.isNumber() 
+                               && newData.val() >= 1502042832800 
+                               && newData.val() <= 1912270032800"
+                  },
+                  "connected": {
+                    ".validate": "newData.val() === true
+                               || newData.val() === false"
+                  },
+                  "url": {
+                    ".validate": "newData.isString()
+                               && newData.val().length <= 512"
+                  },
+                  "$other": {
+                    ".write": false,
+                    ".validate": false
+                  }
+                }
+              },
+              "operator_read_time": {
+                ".validate": "newData.isNumber()
+                           && newData.val() >= 1502042832800 
+                           && newData.val() <= 1912270032800"
+              },
+              "visitor_read_time": {
+                ".validate": "newData.isNumber()
+                           && newData.val() >= 1502042832800 
+                           && newData.val() <= 1912270032800"
+              },
+              "location": {
+                "host": {},
+                "hostname": {},
+                "pathname": {},
+                "port": {},
+                "$other": {
+                  ".write": false,
+                  ".validate": false
+                }
+              },
+              "messages": {
+                "$message_id": {
+                  "text": {
+                    ".validate": "newData.isString()
+                               && newData.val().length <= 512"
+                  },
+                  "type": {
+                    // todo validation
+                  },
+                  "url" : {
+                    // todo validation
+                  },
+                  "created_date": {
+                    ".validate": "newData.isNumber() 
+                               && newData.val() >= 1502042832800 
+                               && newData.val() <= 1912270032800"
+                  },
+                  "$other": {
+                    ".write": false,
+                    ".validate": false
+                  }
+                },
+              },
+              "name": {
+                ".validate": "newData.isString() 
+                           && newData.val().length <= 64"
+              },
+              "received_messages": {
+                "$message_id": {
+                  "sender": {
+                    // todo validation
+                  },
+                  "sender_image": {
+                    // todo validation
+									},
+                  "display_name": {
+                    // todo validation
+									},
+                  "text": {
+                    ".validate": "newData.isString()
+                               && newData.val().length <= 512"
+                  },
+                  "type": {
+                    // todo validation
+                  },
+                  "url" : {
+                    // todo validation
+                  },
+                  "created_date": {
+                    ".validate": "newData.isNumber() 
+                               && newData.val() >= 1502042832800 
+                               && newData.val() <= 1912270032800"
+                  },
+                  "$other": {
+                    ".write": false,
+                    ".validate": false
+                  }
+                },
+              },
+              "trigger_messages": {
+                "$message_id": {
+                  "text": {
+                    ".validate": "newData.isString()
+                               && newData.val().length <= 512"
+                  },
+                  "type": {
+                    // todo validation
+                  },
+                  "url" : {
+                    // todo validation
+                  },
+                  "created_date": {
+                    ".validate": "newData.isNumber() 
+                               && newData.val() >= 1502042832800 
+                               && newData.val() <= 1912270032800"
+                  },
+                  "$other": {
+                    ".write": false,
+                    ".validate": false
+                  }
+                },
+              },
+              "navigator": {
+                "app_code_name": {},
+                "app_name": {},
+                "app_version": {},
+                "language": {},
+                "platform": {},
+                "user_agent": {},
+                "$other": {
+                  ".write": false,
+                  ".validate": false
+                }
+              },
+              "screen": {
+                "width": {},
+                "height": {},
+                "color_depth": {},
+                "$other": {
+                  ".write": false,
+                  ".validate": false
+                }
+              },    
+              "created_date": {
+                ".validate": "newData.isNumber()
+                           && newData.val() >= 1502042832800 
+                           && newData.val() <= 1912270032800"
+              },
+              "updated_date": {
+                ".validate": "newData.isNumber() 
+                           && newData.val() >= 1502042832800 
+                           && newData.val() <= 1912270032800"
+              },
+              "visit_count": {
+                ".validate": "newData.isNumber() 
+                           && newData.val() >= 0"
+              }
+            },
+            "information": {
+              ".validate": "newData.isString() 
+                         && newData.val().length <= 128"
+            },
+            "corresponding_users": {
+              "$user_id": {
+                "start_date": {
+                  ".validate": "newData.isNumber() 
+                             && newData.val() >= 1502042832800 
+                             && newData.val() <= 1912270032800",
+                  "$other": {
+                    ".write": false,
+                    ".validate": false
+                  }
+                },
+                "is_typing": {
+                  ".validate": "newData.val() === true
+                             || newData.val() === false"
+                },
+                "$other": {
+                  ".write": false,
+                  ".validate": false
+                }
+              }
+            },
+            "name": {
+              ".validate": "newData.isString() 
+                         && newData.val().length <= 64"
+            },
+            "read_times": {
+              "$user_id": {
+              	"read_date": {
+                  ".validate": "newData.isNumber()
+                             && newData.val() >= 1502042832800 
+                             && newData.val() <= 1912270032800"
+                }
+              }
+            },
+            "phone": {
+              ".validate": "newData.isString()
+                         && newData.val().length <= 32"
+            },
+            "tags": {
+              "$tag_id": {
+                "name": {
+                  ".validate": "newData.isString()
+                             && newData.val().length <= 512"
+                },
+                "$other": {
+                  ".write": false,
+                  ".validate": false
+                }
+              }
+            },
+            "$other": {
+              ".write": false,
+              ".validate": false
+            },
+          },
+        },
+        "$other": {
+          ".write": false,
+          ".validate": false
+        }
+      }
+    },
+    "plans": {
+      ".read": "root.hasChild('users/' + auth.uid)",
+      ".write": false,
+      "$plan_id": {
+        "name": {
+          ".validate": "newData.isString()"
+        },
+        "$other": {
+          ".write": false,
+          ".validate": false
+        }
+      }
+    },
+    "roles": {
+      ".read": "root.hasChild('users/' + auth.uid)",
+      ".write": false,
+      "$role_id": {
+        "name": {
+          ".validate": "newData.isString()"
+        },
+        "$other": {
+          ".write": false,
+          ".validate": false
+        }
+      }
+    },
+    "sounds": {
+      ".read": "root.hasChild('users/' + auth.uid)",
+      ".write": false,
+      "$sound_id": {
+        "title": {},
+        "url": {},
+        "$other": {
+          ".write": false,
+          ".validate": false
+        }
+      }
+    },
+    "users": {
+      ".read": false,
+      ".write": true,
+      "$user_id": {
+        ".read" : "root.hasChild('users/' + auth.uid)",
+        ".write": true,
+        "organizations": {
+          ".indexOn": ".value",
+          "$organization_id": {
+            // ".validate": "root.hasChild('organization/' + $organization_id)"
+          }
+        },
+        "$other": {
+          ".write": false,
+          ".validate": false
+        }
+      }
+    },
+    "visitors": {
+      ".write": true,
+      "$visitor_id": {
+        ".read" : "root.hasChild('visitors/' + auth.uid)",
+        ".write": true,
+        "organizations": {
+          ".indexOn": ".value",
+          "$organization_id": {
+            // ".validate": "root.hasChild('organization/' + $organization_id)"
+          }
+        },
+        "$other": {
+          ".write": false,
+          ".validate": false
+        }
+      }
+    }
+  }
+}
